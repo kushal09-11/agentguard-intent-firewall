@@ -3,19 +3,26 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.database.database import init_db
-from app.routes import agent, firewall, goal
+from app.routes import agent, analytics, audit, firewall, goal
 
-app = FastAPI(title="AgentGuard", version="0.1.0")
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-                   allow_methods=["*"], allow_headers=["*"])
+app = FastAPI(title="AgentGuard — Intent-Aware Runtime Firewall for AI Agents", version="0.2.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 init_db()
-for r in (goal.router, firewall.router, agent.router):
+
+for r in (goal.router, firewall.router, agent.router, audit.router, analytics.router):
     app.include_router(r)
 
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "agentguard"}
+    return {"status": "ok", "service": "agentguard", "version": "0.2.0"}
 
 
 @app.exception_handler(HTTPException)

@@ -2,42 +2,95 @@ import ExecutionTimeline from './ExecutionTimeline.jsx'
 import DecisionCard from './DecisionCard.jsx'
 import RiskMeter from './RiskMeter.jsx'
 
-function DriftChart({ values }) {
-  if (values.length < 2) return <p className="empty">Drift appears after two actions.</p>
-  const pts = values.map((v, i) => [10 + (i * 280) / (values.length - 1), 90 - v * 0.8])
+export function DriftChart({ actions }) {
+  if (actions.length < 2) {
+    return <p className="empty-sub">Drift trajectory activates after 2+ actions.</p>
+  }
+
+  const values = actions.map((a) => Math.round(a.intent_alignment))
+  const last = actions[actions.length - 1]
+  const driftData = last.details?.drift || {}
+  const trend = driftData.trend || 'STABLE'
+  const severity = driftData.severity || last.drift_level || 'STABLE'
+
+  const pts = values.map((v, i) => [12 + (i * 276) / (values.length - 1), 75 - v * 0.65])
+
   return (
-    <div>
-      <svg viewBox="0 0 300 100" className="chart" role="img" aria-label="Intent alignment over time">
-        <line x1="10" x2="290" y1="26" y2="26" className="thresh" />
+    <div className="drift-mini-wrapper">
+      <div className="drift-chart-meta-compact">
+        <span className={`drift-badge-small ${severity.toLowerCase()}`}>{severity}</span>
+        <span className="drift-trend-text">Trend: <strong>{trend}</strong></span>
+        {driftData.consecutive_off_goal_actions > 0 && (
+          <span className="drift-streak-text">Off-goal: {driftData.consecutive_off_goal_actions}</span>
+        )}
+      </div>
+
+      <svg viewBox="0 0 300 80" className="chart-mini" role="img" aria-label="Intent alignment trend">
+        <line x1="8" x2="292" y1="20" y2="20" className="thresh" strokeDasharray="3 3" />
+        <line x1="8" x2="292" y1="60" y2="60" className="thresh-danger" strokeDasharray="3 3" />
         <polyline points={pts.map((p) => p.join(',')).join(' ')} className="line" />
-        {pts.map(([x, y], i) => (<g key={i}><circle cx={x} cy={y} r="3" className="dot" /><text x={x} y={y - 7} textAnchor="middle">{values[i]}</text></g>))}
+        {pts.map(([x, y], i) => (
+          <g key={i}>
+            <circle cx={x} cy={y} r="3" className="dot" />
+            <text x={x} y={y - 6} textAnchor="middle" className="chart-text">
+              {values[i]}%
+            </text>
+          </g>
+        ))}
       </svg>
-      <p className="trail">{values.join(' → ')}</p>
     </div>
   )
 }
 
-export default function Dashboard({ actions, selected, onSelect }) {
+export default function Dashboard({ actions, selected, onSelect, onReview }) {
   const last = actions[actions.length - 1]
   const blocked = actions.filter((a) => a.decision === 'BLOCK').length
-  const stats = [
-    ['Intent alignment', last ? `${Math.round(last.intent_alignment)}%` : '–'],
-    ['Current risk', last ? `${Math.round(last.risk_score)}%` : '–'],
-    ['Actions evaluated', actions.length],
-    ['Blocked actions', blocked],
-  ]
+  const reviewed = actions.filter((a) => a.decision === 'REVIEW').length
+
   return (
-    <>
-      <div className="stats">
-        {stats.map(([k, v]) => (<div className="stat" key={k}><span>{k}</span><strong>{v}</strong></div>))}
-        {last && <RiskMeter value={last.risk_score} />}
+    <div className="dashboard-subview">
+      <div className="stats-strip">
+        <div className="mini-stat">
+          <span>Alignment</span>
+          <strong>{last ? `${Math.round(last.intent_alignment)}%` : '–'}</strong>
+        </div>
+        <div className="mini-stat">
+          <span>Risk</span>
+          <strong className={last && last.risk_score >= 65 ? 'text-red' : last && last.risk_score >= 30 ? 'text-amber' : 'text-green'}>
+            {last ? `${Math.round(last.risk_score)}%` : '–'}
+          </strong>
+        </div>
+        <div className="mini-stat">
+          <span>Evaluated</span>
+          <strong>{actions.length}</strong>
+        </div>
+        <div className="mini-stat">
+          <span>Block / Review</span>
+          <strong>{blocked} / {reviewed}</strong>
+        </div>
       </div>
-      <div className="grid">
-        <section className="panel"><h2>Execution timeline</h2>
-          <ExecutionTimeline actions={actions} selectedId={selected?.id} onSelect={onSelect} /></section>
-        <section className="panel"><h2>Decision</h2><DecisionCard action={selected} /></section>
+      {last && <RiskMeter value={last.risk_score} />}
+
+      <div className="dashboard-split-grid">
+        <div className="split-timeline-panel">
+          <div className="panel-heading-row">
+            <h2>Timeline</h2>
+            <span className="count-pill">{actions.length}</span>
+          </div>
+          <div className="timeline-scroll-container">
+            <ExecutionTimeline actions={actions} selectedId={selected?.id} onSelect={onSelect} />
+          </div>
+        </div>
+
+        <div className="split-decision-panel">
+          <div className="panel-heading-row">
+            <h2>Decision Telemetry</h2>
+          </div>
+          <div className="inspector-scroll-container">
+            <DecisionCard action={selected} onReview={onReview} />
+          </div>
+        </div>
       </div>
-      <section className="panel"><h2>Intent drift</h2><DriftChart values={actions.map((a) => Math.round(a.intent_alignment))} /></section>
-    </>
+    </div>
   )
 }
