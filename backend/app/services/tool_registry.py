@@ -7,6 +7,20 @@ from typing import Any, Dict, Optional
 
 
 def _mock_search(query: Optional[str] = None, target: Optional[str] = None, **kwargs) -> Dict[str, Any]:
+    t_low = f"{query or ''} {target or ''}".lower()
+    if any(w in t_low for w in ["flight", "airline", "delhi", "hyd", "plane", "travel"]):
+        return {
+            "status": "success",
+            "results_count": 4,
+            "query": query or target or "flights",
+            "items": [
+                {"id": "fl-6e204", "name": "IndiGo 6E-204", "route": "HYD 06:15 -> DEL 08:30", "duration": "2h 15m (Non-stop)", "price": 6499},
+                {"id": "fl-ai840", "name": "Air India AI-840", "route": "HYD 09:45 -> DEL 12:05", "duration": "2h 20m (Non-stop)", "price": 7250},
+                {"id": "fl-uk830", "name": "Vistara UK-830", "route": "HYD 14:00 -> DEL 16:15", "duration": "2h 15m (Non-stop)", "price": 8890},
+                {"id": "fl-sg102", "name": "SpiceJet SG-102", "route": "HYD 18:30 -> DEL 20:50", "duration": "2h 20m (Non-stop)", "price": 5999},
+            ],
+        }
+
     return {
         "status": "success",
         "results_count": 5,
@@ -22,6 +36,19 @@ def _mock_search(query: Optional[str] = None, target: Optional[str] = None, **kw
 
 
 def _mock_filter(target: Optional[str] = None, max_price: Optional[float] = 60000, **kwargs) -> Dict[str, Any]:
+    t_low = (target or "").lower()
+    if any(w in t_low for w in ["flight", "airline", "delhi", "hyd"]):
+        return {
+            "status": "success",
+            "applied_filters": {"max_price": max_price or 20000, "stops": "non-stop", "category": "flight"},
+            "retained_count": 3,
+            "candidates": [
+                {"name": "SpiceJet SG-102", "price": 5999, "route": "HYD -> DEL", "departure": "18:30"},
+                {"name": "IndiGo 6E-204", "price": 6499, "route": "HYD -> DEL", "departure": "06:15"},
+                {"name": "Air India AI-840", "price": 7250, "route": "HYD -> DEL", "departure": "09:45"},
+            ],
+        }
+
     return {
         "status": "success",
         "applied_filters": {"max_price": max_price, "category": "laptop"},
@@ -36,6 +63,18 @@ def _mock_filter(target: Optional[str] = None, max_price: Optional[float] = 6000
 
 
 def _mock_compare(target: Optional[str] = None, specs: Optional[str] = None, **kwargs) -> Dict[str, Any]:
+    t_low = (target or "").lower()
+    if any(w in t_low for w in ["flight", "airline", "timing", "duration"]):
+        return {
+            "status": "success",
+            "spec_comparison": [
+                {"airline": "IndiGo 6E-204", "departure": "06:15", "punctuality": "94%", "baggage": "15kg Check-in + 7kg Cabin", "fare": "₹6,499"},
+                {"airline": "Air India AI-840", "departure": "09:45", "punctuality": "88%", "baggage": "20kg Check-in + 7kg Cabin", "fare": "₹7,250"},
+                {"airline": "Vistara UK-830", "departure": "14:00", "punctuality": "91%", "baggage": "15kg Check-in + 7kg Cabin", "fare": "₹8,890"},
+            ],
+            "top_recommendation": "IndiGo 6E-204 (Best on-time departure & highest cost efficiency under budget)",
+        }
+
     return {
         "status": "success",
         "spec_comparison": [
@@ -48,6 +87,17 @@ def _mock_compare(target: Optional[str] = None, specs: Optional[str] = None, **k
 
 
 def _mock_search_accessories(target: Optional[str] = None, **kwargs) -> Dict[str, Any]:
+    t_low = (target or "").lower()
+    if any(w in t_low for w in ["lounge", "luggage", "travel", "flight", "pass"]):
+        return {
+            "status": "success",
+            "results_count": 2,
+            "items": [
+                {"item": "Plaza Premium Lounge Day Pass (HYD Terminal 1)", "price": 1800},
+                {"item": "American Tourister Cabin Luggage Trolley 55cm", "price": 3499},
+            ],
+        }
+
     return {
         "status": "success",
         "results_count": 3,
@@ -60,6 +110,17 @@ def _mock_search_accessories(target: Optional[str] = None, **kwargs) -> Dict[str
 
 
 def _mock_open_product(target: Optional[str] = None, product: Optional[str] = None, price: Optional[float] = None, **kwargs) -> Dict[str, Any]:
+    t_low = (target or "").lower()
+    if any(w in t_low for w in ["flight", "business", "airline", "vistara"]):
+        return {
+            "status": "success",
+            "product_id": "fl-biz-901",
+            "name": "Vistara Club Prime Business Class (HYD -> DEL)",
+            "price": price or 32000,
+            "cabin": "Business",
+            "perks": "Lie-flat seating, gourmet meal, 35kg baggage, priority boarding",
+        }
+
     return {
         "status": "success",
         "product_id": "game-850",

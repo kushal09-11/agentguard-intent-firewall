@@ -87,55 +87,75 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {/* Top Bar / Header */}
+      {/* Cruip Ambient Background Lighting */}
+      <div className="cruip-bg-glow" aria-hidden="true">
+        <div className="cruip-glow-1"></div>
+        <div className="cruip-glow-2"></div>
+        <div className="cruip-glow-3"></div>
+        <div className="cruip-grid-overlay"></div>
+      </div>
+
+      {/* Top Bar / Cruip Floating Island Header */}
       <header className="app-header">
         <div className="brand-group">
-          <div className="shield-icon">🛡️</div>
+          <div className="cruip-logo-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
           <div className="brand-texts">
-            <h1>AGENTGUARD</h1>
-            <span className="tagline">Intent-Aware Runtime Firewall for AI Agents</span>
+            <h1>
+              AGENTGUARD <span className="brand-badge-pill">RUNTIME FIREWALL</span>
+            </h1>
+            <span className="tagline">Intent-Aware Security &amp; Behavioral Drift Defense for AI Agents</span>
           </div>
         </div>
 
         <div className="header-status-group">
-          <span className="badge-system-live">● FIREWALL LIVE</span>
+          <span className="badge-system-live">
+            <span className="pulse-dot"></span>
+            FIREWALL ACTIVE
+          </span>
           {session && <span className="badge-session">Session AG-{session.session_id}</span>}
         </div>
       </header>
 
-      {/* Navigation Tabs */}
-      <nav className="tab-navigation">
-        <button
-          className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          🛡️ Firewall Dashboard
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'graph' ? 'active' : ''}`}
-          onClick={() => setActiveTab('graph')}
-        >
-          📊 Execution Graph
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          📈 Security Analytics
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
-          onClick={() => setActiveTab('audit')}
-        >
-          📋 Audit Trail {actions.length > 0 ? `(${actions.length})` : ''}
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'policy' ? 'active' : ''}`}
-          onClick={() => setActiveTab('policy')}
-        >
-          ⚙️ Policy Config
-        </button>
-      </nav>
+      {/* Navigation Tabs - Cruip Pill Bar */}
+      <div className="tab-navigation-container">
+        <nav className="tab-navigation">
+          <button
+            className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            🛡️ Firewall Dashboard
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'graph' ? 'active' : ''}`}
+            onClick={() => setActiveTab('graph')}
+          >
+            📊 Execution Graph
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            📈 Security Analytics
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
+            onClick={() => setActiveTab('audit')}
+          >
+            📋 Audit Trail {actions.length > 0 ? `(${actions.length})` : ''}
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'policy' ? 'active' : ''}`}
+            onClick={() => setActiveTab('policy')}
+          >
+            ⚙️ Policy Config
+          </button>
+        </nav>
+      </div>
 
       {bannerNotice && (
         <div className="system-notice-banner" role="status">
@@ -168,7 +188,7 @@ export default function App() {
                 />
               </div>
               <div className="wireframe-col">
-                <AgentAction disabled={busy} onSubmit={onEvaluate} />
+                <AgentAction disabled={busy} onSubmit={onEvaluate} session={session} goalText={goalText} />
               </div>
             </div>
 
@@ -177,7 +197,9 @@ export default function App() {
               <div className="wireframe-col">
                 <section className="panel execution-stream-panel">
                   <div className="panel-heading-row">
-                    <h2>Action Execution</h2>
+                    <div className="panel-title-group">
+                      <h2>Action Execution</h2>
+                    </div>
                     <span className="count-pill">{actions.length} Total</span>
                   </div>
                   <div className="stream-scroll-container">
@@ -193,7 +215,9 @@ export default function App() {
               <div className="wireframe-col">
                 <section className="panel security-analysis-panel">
                   <div className="panel-heading-row">
-                    <h2>Firewall Security Analysis</h2>
+                    <div className="panel-title-group">
+                      <h2>Firewall Security Analysis</h2>
+                    </div>
                     {selected && <span className="mono-sub">Action AG-{String(selected.id).padStart(4, '0')}</span>}
                   </div>
                   <div className="analysis-scroll-container">
@@ -207,7 +231,9 @@ export default function App() {
             <div className="wireframe-row-bottom">
               <section className="panel drift-trajectory-panel">
                 <div className="panel-heading-row">
-                  <h2>Drift Trajectory</h2>
+                  <div className="panel-title-group">
+                    <h2>Drift Trajectory</h2>
+                  </div>
                   {actions.length > 0 && (
                     <span className="subtitle-inline">Sequential Intent Drift Telemetry</span>
                   )}
@@ -226,9 +252,11 @@ export default function App() {
         {activeTab === 'graph' && (
           <div className="panel graph-view-panel">
             <div className="panel-heading-row">
-              <div>
-                <h2>Agent Execution Graph</h2>
-                <p className="subtitle-compact">Interactive node visualization of agent intent trajectory</p>
+              <div className="panel-title-group">
+                <div>
+                  <h2>Agent Execution Graph</h2>
+                  <p className="subtitle-compact">Interactive node visualization of agent intent trajectory</p>
+                </div>
               </div>
               <div className="legend-pills">
                 <span className="pill-allow">ALLOW</span>
@@ -279,6 +307,14 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {/* Cruip-style App Footer */}
+      <footer className="cruip-app-footer">
+        <div className="footer-content">
+          <span>AgentGuard Intent Firewall • Defense-in-Depth AI Agent Security</span>
+          <span className="footer-status-pill">Zero-Trust Agent Runtime</span>
+        </div>
+      </footer>
     </div>
   )
 }

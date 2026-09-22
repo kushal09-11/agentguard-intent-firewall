@@ -29,7 +29,8 @@ def review_action(action_id: int, req: ReviewActionRequest):
 
     if decision_choice == "APPROVED":
         # Execute tool upon human security approval
-        output = execute_tool_call(act["action"], act["target"], act.get("parameters", {}))
+        params = act.get("parameters") or act.get("details", {}).get("parameters", {})
+        output = execute_tool_call(act["action"], act["target"], params)
         output["human_review_note"] = req.notes or "Approved by security operator."
         updated = db.update_action_review(
             action_id=action_id,

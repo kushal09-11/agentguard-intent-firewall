@@ -11,7 +11,9 @@ export default function GoalPanel({
   return (
     <section className="panel goal-panel">
       <div className="panel-heading-row">
-        <h2>User Goal Specification</h2>
+        <div className="panel-title-group">
+          <h2>User Goal Specification</h2>
+        </div>
         {session && <span className="session-id-pill">AG-{session.session_id}</span>}
       </div>
 

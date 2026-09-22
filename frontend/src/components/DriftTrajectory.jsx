@@ -110,16 +110,16 @@ export default function DriftTrajectory({ actions = [], selectedId, onSelect }) 
 
           {/* Background grid lines */}
           <line x1={padLeft} x2={svgWidth - padRight} y1={padTop} y2={padTop} stroke="#30363d" strokeDasharray="3 3" opacity="0.5" />
-          <text x={padLeft - 8} y={padTop + 4} textAnchor="end" className="svg-axis-label">100%</text>
+          <text x={padLeft - 8} y={padTop + 4} textAnchor="end" className="svg-axis-label" fill="#94a3b8">100%</text>
 
           <line x1={padLeft} x2={svgWidth - padRight} y1={safeY} y2={safeY} stroke="rgba(46, 160, 67, 0.4)" strokeDasharray="4 4" />
-          <text x={padLeft - 8} y={safeY + 4} textAnchor="end" className="svg-axis-label text-green">70%</text>
+          <text x={padLeft - 8} y={safeY + 4} textAnchor="end" className="svg-axis-label text-green" fill="#34d399">70%</text>
 
           <line x1={padLeft} x2={svgWidth - padRight} y1={warnY} y2={warnY} stroke="rgba(248, 81, 73, 0.4)" strokeDasharray="4 4" />
-          <text x={padLeft - 8} y={warnY + 4} textAnchor="end" className="svg-axis-label text-red">40%</text>
+          <text x={padLeft - 8} y={warnY + 4} textAnchor="end" className="svg-axis-label text-red" fill="#f87171">40%</text>
 
           <line x1={padLeft} x2={svgWidth - padRight} y1={padTop + chartH} y2={padTop + chartH} stroke="#30363d" />
-          <text x={padLeft - 8} y={padTop + chartH + 4} textAnchor="end" className="svg-axis-label">0%</text>
+          <text x={padLeft - 8} y={padTop + chartH + 4} textAnchor="end" className="svg-axis-label" fill="#94a3b8">0%</text>
 
           {/* Area fill */}
           {areaPathStr && (
@@ -168,6 +168,7 @@ export default function DriftTrajectory({ actions = [], selectedId, onSelect }) 
                   y={padTop + chartH + 16}
                   textAnchor="middle"
                   className="svg-step-label"
+                  fill="#cbd5e1"
                 >
                   #{p.index} {p.action.action}
                 </text>
@@ -194,6 +195,7 @@ export default function DriftTrajectory({ actions = [], selectedId, onSelect }) 
                 y={padTop + chartH / 2 + 4}
                 textAnchor="middle"
                 className="svg-empty-msg"
+                fill="#38bdf8"
               >
                 Baseline established at 100% intent alignment. Sequential actions will plot real-time trajectory.
               </text>

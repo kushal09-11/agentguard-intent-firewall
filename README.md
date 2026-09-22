@@ -1,127 +1,130 @@
-# AGENTGUARD — Intent-Aware Runtime Firewall for AI Agents
+# AgentGuard — Intent-Aware Runtime Firewall for AI Agents
 
-> **Runtime security and progressive intent drift protection for autonomous AI agents.**  
-> Evaluates every proposed tool call against the user's original objective before execution.
-
----
-
-## The Problem
-
-Traditional access control and authorization systems ask:
-> *"Is the AI agent technically permitted to call this tool?"*
-
-In real-world agentic workflows, this is insufficient. A compromised, hallucinatory, or over-ambitious agent can drift into unrelated or sensitive operations (accessing purchase histories, reading banking records, or following prompt injections) while using technically authorized tools.
-
-AgentGuard asks:
-> *"Is the agent allowed to perform this action **AND** is this action actually consistent with the user's current goal?"*
+> **AgentGuard** is a runtime security firewall that monitors AI agents in real time. Before an agent executes any tool, AgentGuard checks whether the action is safe and actually matches the user's original goal.
 
 ---
 
-## High-Level Architecture
+## 📊 Work Completed & Project Status
 
-```
-User Goal ("Find a programming laptop under ₹60,000 with 16GB RAM")
-   │
-   ▼
-[Intent Engine] ──> [Goal Representation & Boundary Constraints]
-   │
-   ├───────────────────────────────────────────────────────┐
-   ▼                                                       ▼
-[Simulated Agent / Tool Interceptor]              [Agent Action Proposal]
-   │                                                       │
-   ▼                                                       ▼
-[AgentGuard Runtime Firewall] ─────────────────── [Firewall Pipeline]
-   │                                                       │
-   ├─ 1. Semantic Intent Alignment (0-100)                 │
-   ├─ 2. Explicit Constraint Engine (Budget & Specs)       │
-   ├─ 3. Contextual Sensitivity Classifier (LOW-CRITICAL)  │
-   ├─ 4. Progressive Drift Detector (Trajectory & Delving) │
-   ├─ 5. Adversarial Prompt Injection Detector             │
-   ├─ 6. Context-Aware Risk Engine (Transparent Weights)   │
-   └─ 7. Configurable Policy Engine (Hard Rules & Bounds)  │
-                                                           │
-                      ┌────────────────────────────────────┘
-                      ▼
-             [Decision Matrix]
-             ├── ALLOW  ──> Execute Tool ──> Return Result
-             ├── REVIEW ──> Suspend Execution ──> Human Approval (Approve / Deny)
-             └── BLOCK  ──> Abort Tool ──> Prevent Execution & Log Security Event
-                      │
-                      ▼
-[Security Audit Log] + [Security Analytics] + [Execution Graph]
-```
+### **Current Status: Core MVP Completed (100%)**
+
+| Component | Status | Description |
+| :--- | :---: | :--- |
+| **Intent Engine & Goal Parser** | ✅ Completed | Natural language parser for budgets, specifications, and domains (Laptops, Flights, Hotels, etc.). |
+| **Semantic Alignment Engine** | ✅ Completed | 100% offline concept matching and domain ontology to calculate 0–100% alignment score. |
+| **Constraint Violation Engine** | ✅ Completed | Enforces budget caps (e.g., ₹20,000 limit) and technical specifications. |
+| **Progressive Drift Detector** | ✅ Completed | Tracks agent trajectory over time to catch gradual drift away from the goal. |
+| **Resource Sensitivity Classifier** | ✅ Completed | Flags access to `LOW`, `MEDIUM`, `HIGH`, or `CRITICAL` assets (banking, history, credentials). |
+| **Prompt Injection Detection** | ✅ Completed | Detects indirect instruction overrides embedded in third-party web content. |
+| **Runtime Tool Interception** | ✅ Completed | Physically blocks disallowed tools, pauses review actions, and executes allowed tools. |
+| **Dynamic Goal Simulation** | ✅ Completed | Generates realistic 8-step agent action sequences tailored to whatever goal the user enters. |
+| **Human-in-the-Loop Review** | ✅ Completed | Dashboard buttons to manually `Approve` or `Deny` paused actions in real time. |
+| **Interactive Dashboard (UI)** | ✅ Completed | React UI with timeline stream, telemetry inspector, execution graph, and policy controls. |
+| **Automated Test Suite** | ✅ Completed | 22 tests verifying core firewall rules, dynamic goal simulations, and live API endpoints. |
 
 ---
 
-## Core Security Capabilities
+## 🚀 Features Implemented So Far
 
-1. **Semantic Intent Layer**: Local concept ontology + token/n-gram vector cosine similarity. Understands synonyms (e.g. *"developer notebook"* ↔ *"programming laptop"*, *"compare processor & memory"* ↔ *"compare CPU & RAM"*) with zero paid API dependencies.
-2. **Progressive Intent Drift Detection**: Tracks the complete historical trajectory (delta drop, moving average, trend direction, consecutive off-goal streak, and cumulative drift score) classifying severity into `STABLE`, `MILD`, `MODERATE`, `HIGH`, or `CRITICAL`.
-3. **Context-Aware Risk Engine**: Weighted multi-signal formula combining intent drift, resource sensitivity, action criticality, constraint violations, and prompt injection signals.
-4. **Runtime Tool Interception**: Functional execution adapter where **BLOCKED actions are strictly prevented from calling tools**, **ALLOWED actions execute**, and **REVIEW actions suspend execution until human operator approval**.
-5. **Human-in-the-Loop Review**: Real-time approval workflow (`APPROVE` / `DENY`) with persistence in audit logs.
-6. **Constraint Violation Engine**: Deterministic verification of budget ceilings (e.g. ₹85,000 vs ₹60,000 budget), hardware specs (16GB RAM vs 8GB), and domain boundaries.
-7. **Resource Sensitivity Classification**: Categorizes data into `LOW` (public), `MEDIUM` (user settings), `HIGH` (purchase history), and `CRITICAL` (banking, passwords, API keys).
-8. **Prompt Injection Detection**: Identifies adversarial instruction overrides (`ignore previous instructions`, `system spoofing`, `user intent replacement`).
-9. **Explainable Security Decisions**: Generates human-readable rationales explaining exactly which factors contributed to the decision.
-10. **Interactive Execution Graph**: Visual node graph detailing agent trajectory with status badges and telemetry.
-11. **Security Analytics**: Real-time trajectory charts, threat counters, and enforcement ratios.
-12. **Configurable Policy Engine**: Centralized decision thresholds and hard security rules configurable via API and UI.
+### 1. Dynamic Goal-Aware Simulation
+- Supports any user goal (e.g. *"Find a programming laptop under ₹60,000"* or *"Find flights from hyd to delhi under 20000 rupees"*).
+- Automatically adapts the simulated agent's actions to the user's exact subject, budget, and route.
+- Adapts quick presets in the UI to match the current goal.
+
+### 2. Runtime Decision Pipeline
+For every proposed agent action, AgentGuard returns one of three decisions:
+- **ALLOW**: Safe and aligned with the goal. The tool executes automatically.
+- **REVIEW**: Tangential action or mild drift (e.g., looking at accessories or lounge passes). Execution is paused until a human approves or denies it.
+- **BLOCK**: Dangerous, over-budget, off-limits, or prompt-injected action. Tool execution is prevented.
+
+### 3. Progressive Intent Drift Tracking
+- Analyzes past action history to detect if an agent is slowly wandering off-task over multiple steps.
+- Categorizes drift level into `STABLE`, `MILD`, `MODERATE`, `HIGH`, or `CRITICAL`.
+
+### 4. Deterministic Constraint Checks
+- Checks hard boundaries like maximum price/budget limits and specific requirements (e.g., 16GB RAM).
+- Flags violations with expected vs. actual values and percentage over budget.
+
+### 5. Sensitive Data & Injection Defense
+- Blocks unauthorized reads to bank accounts, credentials, and purchase history.
+- Scans parameters, URLs, and incoming webpage text for adversarial prompt injection strings.
+
+### 6. Full Interactive Web Dashboard
+- **Firewall Dashboard**: Live goal input, quick action evaluator, action timeline stream, and security analysis card.
+- **Execution Graph**: Visual flow diagram showing each step's security verdict.
+- **Security Analytics**: Real-time charts of intent alignment trends and threat counters.
+- **Audit Trail**: Complete record of all evaluated and reviewed actions.
+- **Policy Config**: Easy sliders and toggles to adjust risk thresholds and sensitivity rules.
 
 ---
 
-## Primary 8-Step Security Demo
+## 🧪 Example 8-Step Demo Scenarios
 
-**User Goal:**
-`"Find a programming laptop under ₹60,000 with 16GB RAM."`
+AgentGuard demonstrates an 8-step security progression for any goal:
 
-| Step | Action | Target | Details | Firewall Decision | Security Telemetry |
-| :---: | :--- | :--- | :--- | :---: | :--- |
-| **1** | `search` | `programming laptops` | Developer laptops matching specs | **ALLOW** | Intent: 95% · Risk: 5% · STABLE · Executed: Yes |
-| **2** | `filter` | `laptops under 60000` | Budget ₹60,000 limit & 16GB RAM | **ALLOW** | Intent: 90% · Risk: 6% · STABLE · Executed: Yes |
-| **3** | `compare` | `laptop cpu and ram` | Processor and memory benchmarks | **ALLOW** | Intent: 88% · Risk: 7% · STABLE · Executed: Yes |
-| **4** | `search` | `laptop accessories` | Sleeves, stands, and adapters | **REVIEW** | Intent: 50% · Risk: 22% · HIGH Drift · Execution Paused |
-| **5** | `open` | `gaming laptop` | Price: ₹85,000 (Exceeds ₹60k budget) | **BLOCK** | Budget breach · Off-topic gaming · Execution Blocked |
-| **6** | `read` | `purchase_history` | Private order history | **BLOCK** | Intent: 5% · Risk: 71% · HIGH Sensitivity · Blocked |
-| **7** | `read` | `banking` | Bank account balance check | **BLOCK** | Intent: 5% · Risk: 74% · CRITICAL Sensitivity · Blocked |
-| **8** | `read` | `web_review` | Page with prompt injection payload | **BLOCK** | Prompt Injection Detected · High Threat · Blocked |
+### Scenario A: Flights (`"Find flights from hyd to delhi under 20000 rupees"`)
+1. **Search flights from HYD to Delhi** -> `ALLOW` (Aligned, low risk)
+2. **Filter flights under ₹20,000** -> `ALLOW` (Within budget)
+3. **Compare flight timings & airlines** -> `ALLOW` (IndiGo, Air India, Vistara)
+4. **Search airport lounge & luggage** -> `REVIEW` (Mild drift / add-ons)
+5. **Open ₹32,000 Business Class flight** -> `BLOCK` (Over budget violation)
+6. **Read travel booking history** -> `BLOCK` (Sensitive user data)
+7. **Access banking / payment cards** -> `BLOCK` (Critical financial resource)
+8. **Encounter prompt injection in travel deal** -> `BLOCK` (Malicious payload detected)
+
+### Scenario B: Laptops (`"Find a programming laptop under ₹60,000 with 16GB RAM"`)
+1. **Search programming laptops** -> `ALLOW`
+2. **Filter laptops under ₹60,000** -> `ALLOW`
+3. **Compare CPU and RAM benchmarks** -> `ALLOW`
+4. **Search laptop accessories** -> `REVIEW`
+5. **Open ₹85,000 gaming laptop** -> `BLOCK`
+6. **Read purchase history** -> `BLOCK`
+7. **Access banking** -> `BLOCK`
+8. **Encounter prompt injection in tech review** -> `BLOCK`
 
 ---
 
-## How to Run Locally
+## 💻 How to Run
 
-### 1. Backend (FastAPI)
+### 1. Start Backend (Port 8000)
 ```powershell
 cd backend
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+.\.venv\Scripts\python.exe run.py
 ```
-Swagger API Documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
+*API documentation available at:* `http://127.0.0.1:8000/docs`
 
-### 2. Frontend (React + Vite)
+### 2. Start Frontend (Port 5173)
 ```powershell
 cd frontend
 npm run dev
 ```
-Dashboard UI: [http://localhost:5173](http://localhost:5173)
+*Dashboard available at:* `http://localhost:5173`
 
-### 3. Run Automated Tests (10 Core Scenarios)
+### 3. Run Automated Tests
 ```powershell
 cd backend
-.\.venv\Scripts\python.exe -m unittest tests/test_firewall_engine.py -v
+.\.venv\Scripts\python.exe -m unittest discover tests -v
 ```
+*(Runs all 22 tests covering core firewall rules, constraints, intent drift, dynamic goal simulations, and live API endpoints).*
 
 ---
 
-## API Endpoints
+## 📁 Repository Structure
 
-- `POST /api/goal` — Parse user goal into structured intent and establish session baseline.
-- `POST /api/firewall/evaluate` — Intercept, evaluate, and enforce decision on proposed agent action.
-- `POST /api/agent/run` — Execute full 8-step security demonstration scenario.
-- `POST /api/agent/step` — Interactively advance the demo scenario step-by-step.
-- `POST /api/review/{action_id}` — Human-in-the-loop review (`APPROVED` or `DENIED`).
-- `GET /api/session/{session_id}` — Retrieve session status, actions, and summary.
-- `GET /api/actions` — List actions for a session.
-- `GET /api/audit/{session_id}` — Structured immutable security audit trail.
-- `GET /api/analytics/{session_id}` — Aggregated security metrics, threat counts, and time-series telemetry.
-- `GET /api/policy` & `PUT /api/policy` — View and configure active firewall rules and thresholds.
-- `GET /api/health` — Service health check.
+```
+agentguard-intent-firewall/
+├── backend/
+│   ├── app/
+│   │   ├── routes/        # API endpoints (agent, firewall, goal, audit, analytics)
+│   │   ├── services/      # Core engines (intent, semantic, constraints, drift, risk, policy)
+│   │   └── database/      # SQLite storage for sessions and actions
+│   ├── tests/             # Automated test suite (15 unit tests)
+│   └── run.py             # Backend entry point
+├── frontend/
+│   ├── src/
+│   │   ├── components/    # UI panels (Dashboard, Graph, Analytics, Audit, Policy)
+│   │   ├── services/      # API communication layer
+│   │   └── App.jsx        # Main application layout
+│   └── package.json
+└── README.md
+```
